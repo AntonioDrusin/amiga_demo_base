@@ -7,6 +7,19 @@ ifdef OS
 	SHELL = cmd.exe
 endif
 
+ifdef WINDOWS
+	MKDIR_OBJ = if not exist obj mkdir obj
+	MKDIR_OUT = if not exist out mkdir out
+	MKDIR_OBJ_FOLDERS = if not exist "$(dir $@)" mkdir "$(dir $@)"
+	SDKDIR = $(abspath $(dir $(shell where $(CC)))..\m68k-amiga-elf\sys-include)
+else
+	MKDIR_OBJ = @mkdir -p obj
+	MKDIR_OUT = @mkdir -p out
+	MKDIR_OBJ_FOLDERS = @mkdir -p $(dir $@)
+	SDKDIR = $(abspath $(dir $(shell which $(CC)))../m68k-amiga-elf/sys-include)
+endif
+
+
 subdirs := $(wildcard */)
 VPATH = $(subdirs)
 cpp_sources := $(wildcard *.cpp) $(wildcard $(addsuffix *.cpp,$(subdirs)))
@@ -27,19 +40,23 @@ OUT = $(program)
 CC = m68k-amiga-elf-gcc
 VASM = vasmm68k_mot
 
-ifdef WINDOWS
-	SDKDIR = $(abspath $(dir $(shell where $(CC)))..\m68k-amiga-elf\sys-include)
-else
-	SDKDIR = $(abspath $(dir $(shell which $(CC)))../m68k-amiga-elf/sys-include)
-endif
-
 CCFLAGS = -g -MP -MMD -m68000 -Ofast -nostdlib -Wextra -Wno-unused-function -Wno-volatile-register-var -fomit-frame-pointer -fno-tree-loop-distribution -flto -fwhole-program -fno-exceptions -ffunction-sections -fdata-sections
 CPPFLAGS= $(CCFLAGS) -fno-rtti -fcoroutines -fno-use-cxa-atexit
 ASFLAGS = -Wa,-g,--register-prefix-optional,-I$(SDKDIR),-D
 LDFLAGS = -Wl,--emit-relocs,--gc-sections,-Ttext=0,-Map=$(OUT).map
 VASMFLAGS = -m68000 -Felf -opt-fconst -nowarn=62 -dwarf=3 -quiet -x -I. -I$(SDKDIR)
 
-all: $(OUT).exe
+all: out $(OUT).exe
+
+obj:
+	@$(MKDIR_OBJ)
+
+out:
+	@$(MKDIR_OUT)
+
+$(cpp_objects) : | obj
+
+$(c_objects) : | obj
 
 $(OUT).exe: $(OUT).elf
 	$(info Elf2Hunk $(program).exe)
@@ -49,14 +66,6 @@ $(OUT).elf: $(objects)
 	$(info Linking $(program).elf)
 	@$(CC) $(CCFLAGS) $(LDFLAGS) $(objects) -o $@
 	@m68k-amiga-elf-objdump --disassemble --no-show-raw-ins --visualize-jumps -S $@ >$(OUT).s
-
-clean:
-	$(info Cleaning...)
-ifdef WINDOWS
-	@del /q obj\* out\*
-else
-	@$(RM) obj/* out/*
-endif
 
 -include $(objects:.o=.d)
 
@@ -75,3 +84,11 @@ $(s_objects): obj/%.o : %.s
 $(vasm_objects): obj/%.o : %.asm
 	$(info Assembling $<)
 	@$(VASM) $(VASMFLAGS) -o $@ $(CURDIR)/$<
+
+clean:
+	$(info Cleaning...)
+ifdef WINDOWS
+	@del /q obj\* out\*
+else
+	@$(RM) obj/* out/*
+endif
