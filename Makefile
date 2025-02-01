@@ -74,21 +74,32 @@ $(OUT).elf: $(objects)
 
 -include $(objects:.o=.d)
 
-$(cpp_objects) : obj/%.o : %.cpp
+# Special target for GFX changes
+GFX_FILES := $(wildcard ./gfx/*)
+gfx_marker: $(GFX_FILES)
+	@echo Running convert.cmd due to changes in GFX files...
+	@cd gfx && convert.cmd
+ifdef WINDOWS
+	@echo.>gfx_marker
+else	
+	@touch gfx_marker
+endif	
+
+$(cpp_objects) : obj/%.o : %.cpp gfx_marker
 	@$(MKDIR_OBJ_FOLDERS)
 	$(info Compiling $<)
 	@$(CC) $(CPPFLAGS) -c -o $@ $(CURDIR)/$<
 
-$(c_objects) : obj/%.o : %.c
+$(c_objects) : obj/%.o : %.c gfx_marker
 	@$(MKDIR_OBJ_FOLDERS)
 	$(info Compiling $<)
 	@$(CC) $(CCFLAGS) -c -o $@ $(CURDIR)/$<
 
-$(s_objects): obj/%.o : %.s
+$(s_objects): obj/%.o : %.s gfx_marker
 	$(info Assembling $<)
 	@$(CC) $(CCFLAGS) $(ASFLAGS) -c -o $@ $(CURDIR)/$<
 
-$(vasm_objects): obj/%.o : %.asm
+$(vasm_objects): obj/%.o : %.asm gfx_marker
 	$(info Assembling $<)
 	@$(VASM) $(VASMFLAGS) -o $@ $(CURDIR)/$<
 
