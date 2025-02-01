@@ -12,6 +12,7 @@
 #include "utils/copper.h"
 #include "utils/hard.h"
 #include "utils/music.h"
+#include "utils/screen.h"
 
 //config
 #define MUSIC
@@ -54,13 +55,13 @@ void WaitVbl() {
 	while (1) {
 		volatile ULONG vpos=*(volatile ULONG*)0xDFF004;
 		vpos&=0x1ff00;
-		if (vpos!=(311<<8))
+		if (vpos!=(verticalPositions->vblank<<8))
 			break;
 	}
 	while (1) {
 		volatile ULONG vpos=*(volatile ULONG*)0xDFF004;
 		vpos&=0x1ff00;
-		if (vpos==(311<<8))
+		if (vpos==(verticalPositions->vblank<<8))
 			break;
 	}
 	debug_stop_idle();
@@ -248,23 +249,6 @@ static __attribute__((interrupt)) void interruptHandler() {
 	frameCounter++;
 }
 
-#ifdef __cplusplus
-	class TestClass {
-	public:
-		TestClass(int y) {
-			static int x = 7;
-			i = y + x;
-		}
-		~TestClass() {
-			KPrintF("~TestClass()");
-		}
-
-		int i;
-	};
-
-	TestClass staticClass(4);
-#endif
-
 // set up a 320x256 lowres display
 __attribute__((always_inline)) inline USHORT* screenScanDefault(USHORT* copListEnd) {
 	const USHORT x=129;
@@ -292,7 +276,8 @@ static void Wait11() { WaitLine(0x11); }
 static void Wait12() { WaitLine(0x12); }
 static void Wait13() { WaitLine(0x13); }
 
-int main() {
+
+int main() {	
 	SysBase = *((struct ExecBase**)4UL);
 	custom = (struct Custom*)0xdff000;
 
@@ -306,12 +291,11 @@ int main() {
 	if (!DOSBase)
 		Exit(0);
 
-#ifdef __cplusplus
-	KPrintF("Hello debugger from Amiga: %ld!\n", staticClass.i);
-#else
+	SetScreenMode(); // This does nothing at the moment. See screen.c
+
 	KPrintF("Hello debugger from Amiga!\n");
-#endif
 	Write(Output(), (APTR)"Hello console!\n", 15);
+
 	Delay(50);
 
 	warpmode(1);

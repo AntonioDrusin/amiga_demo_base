@@ -18,3 +18,8 @@ This is an Amiga startup project for demos or games. I needed a few changes from
 4. Separation of concerns for copper support.
 5. Full inclusion of a newer P61 player source code, for modifications and integration.
 6. Makefile modified to run convert.exe when the graphics sources have changed.
+
+
+# Additions
+
+Defined __ASM_EXPORT__ macro to export C symbols to assembly keeping the optimization of the whole program.

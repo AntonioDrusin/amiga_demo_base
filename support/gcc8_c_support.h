@@ -13,6 +13,8 @@
     #define ASM(...)
 #endif
 
+#define __ASM_EXPORT__ (__attribute__((used)))
+
 void *memcpy (void *, const void *, unsigned long);
 void *memset (void *, int, unsigned long);
 void *memmove (void *, const void *, unsigned long);

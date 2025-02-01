@@ -121,7 +121,7 @@ opt020	=0	;1=enable optimizations for 020+. Please be 68000 compatible!
 		;splitchans will already give MUCH bigger gains, and you can
 		;try the MAXOPTI mode.
 
-p61jump	=1	;0 to leave out P61_SetPosition (size gain)
+p61jump	=0	;0 to leave out P61_SetPosition (size gain)
 		;1 if you need to force-start at a given position fex in a game
 
 C	=0	;If you happen to have some $dffxxx value in a6, you can 
@@ -233,7 +233,6 @@ suppF01	=P61pl	;if 1, split4=1 may cause sound errors. but try it anyway. :)
 
     section	code
 	xdef playRtn
-
 
     playRtn:
         include "support/P6112-Play.i"
