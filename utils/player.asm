@@ -67,13 +67,11 @@
 ;	 - (requires a timed call to P61_Music and a timed copper command 
 ;	    11 scanlines later to set sound DMA. Maximum optimized.)
 
-P61mode	= 1	;Try other modes ONLY IF there are no Fxx commands >= 20.
+P61mode	= 2	;Try other modes ONLY IF there are no Fxx commands >= 20.
 		;(f.ex., P61.new_ditty only works with P61mode=1)
 
 
 ;;    ---  options common to all P61modes  ---
-;; $9506
-;; $9756 for Xmas mod
 usecode	= $ffff	;CHANGE! to the USE hexcode from P61con for a big 
 		;CPU-time gain! (See module usecodes at end of source)
 		;Multiple songs, single playroutine? Just "OR" the 
@@ -96,7 +94,7 @@ splitchans=0	;#channels to be split off to be decrunched at "playtime frame"
 		;Experiment to find minimum rastertime, but it should be 1 or 2
 		;for 3-4 channels songs and 0 or 1 with less channels.
 
-visuctrs=1	;enables visualizers in this example: P61_visuctr0..3.w 
+visuctrs=0	;enables visualizers in this example: P61_visuctr0..3.w 
 		;containing #frames (#lev6ints if cia=1) elapsed since last
 		;instrument triggered. (0=triggered this frame.)
 		;Easy alternative to E8x or 1Fx sync commands.
@@ -108,7 +106,7 @@ p61system=0	;1=system-friendly. Use for DOS/Workbench programs.
 
 p61exec	=0	;0 if execbase is destroyed, such as in a trackmo.
 
-p61fade	=1	;enable channel volume fading from your demo
+p61fade	=0	;enable channel volume fading from your demo
 
 channels=4	;<4 for game sound effects in the higher channels. Incompatible
 		; with splitchans/split4.
