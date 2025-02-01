@@ -85,21 +85,21 @@ else
 	@touch gfx_marker
 endif	
 
-$(cpp_objects) : obj/%.o : %.cpp gfx_marker
+$(cpp_objects) : obj/%.o : %.cpp gfx_marker Makefile
 	@$(MKDIR_OBJ_FOLDERS)
 	$(info Compiling $<)
 	@$(CC) $(CPPFLAGS) -c -o $@ $(CURDIR)/$<
 
-$(c_objects) : obj/%.o : %.c gfx_marker
+$(c_objects) : obj/%.o : %.c gfx_marker Makefile
 	@$(MKDIR_OBJ_FOLDERS)
 	$(info Compiling $<)
 	@$(CC) $(CCFLAGS) -c -o $@ $(CURDIR)/$<
 
-$(s_objects): obj/%.o : %.s gfx_marker
+$(s_objects): obj/%.o : %.s gfx_marker Makefile
 	$(info Assembling $<)
 	@$(CC) $(CCFLAGS) $(ASFLAGS) -c -o $@ $(CURDIR)/$<
 
-$(vasm_objects): obj/%.o : %.asm gfx_marker
+$(vasm_objects): obj/%.o : %.asm gfx_marker Makefile
 	$(info Assembling $<)
 	@$(VASM) $(VASMFLAGS) -o $@ $(CURDIR)/$<
 
