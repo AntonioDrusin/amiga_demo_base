@@ -22,14 +22,19 @@ endif
 
 subdirs := $(wildcard */)
 VPATH = $(subdirs)
+
 cpp_sources := $(wildcard *.cpp) $(wildcard $(addsuffix *.cpp,$(subdirs)))
-cpp_objects := $(addprefix obj/,$(patsubst %.cpp,%.o,$(notdir $(cpp_sources))))
+cpp_objects := $(addprefix obj/,$(patsubst %.cpp,%.o,$(cpp_sources)))
+
 c_sources := $(wildcard *.c) $(wildcard $(addsuffix *.c,$(subdirs)))
-c_objects := $(addprefix obj/,$(patsubst %.c,%.o,$(notdir $(c_sources))))
+c_objects := $(addprefix obj/,$(patsubst %.c,%.o,$(c_sources)))
+
 s_sources := support/gcc8_a_support.s support/depacker_doynax.s
 s_objects := $(addprefix obj/,$(patsubst %.s,%.o,$(notdir $(s_sources))))
+
 vasm_sources := $(wildcard *.asm) $(wildcard $(addsuffix *.asm, $(subdirs)))
 vasm_objects := $(addprefix obj/, $(patsubst %.asm,%.o,$(notdir $(vasm_sources))))
+
 objects := $(cpp_objects) $(c_objects) $(s_objects) $(vasm_objects)
 
 # https://stackoverflow.com/questions/4036191/sources-from-subdirectories-in-makefile/4038459
@@ -70,10 +75,12 @@ $(OUT).elf: $(objects)
 -include $(objects:.o=.d)
 
 $(cpp_objects) : obj/%.o : %.cpp
+	@$(MKDIR_OBJ_FOLDERS)
 	$(info Compiling $<)
 	@$(CC) $(CPPFLAGS) -c -o $@ $(CURDIR)/$<
 
 $(c_objects) : obj/%.o : %.c
+	@$(MKDIR_OBJ_FOLDERS)
 	$(info Compiling $<)
 	@$(CC) $(CCFLAGS) -c -o $@ $(CURDIR)/$<
 
