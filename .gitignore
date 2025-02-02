@@ -1,2 +1,6 @@
 out/
 obj/
+/*.TGA
+/*.bpl
+/*.pal
+gfx_marker
