@@ -8,4 +8,5 @@ static const struct VerticalPositions NTSCPositions = {262};
 // That will cost in runtime though.
 const struct VerticalPositions * const verticalPositions = &PALPositions;
 
-void SetScreenMode() { return;}
+void SetScreenMode() { }
+
