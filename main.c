@@ -131,6 +131,7 @@ __attribute__((always_inline)) inline USHORT* screenScanDefault(USHORT* copListE
 
 
 int main() {	
+	OpenLibraries();
 	SetScreenMode(); // This does nothing at the moment. See screen.c
 
 	KPrintF("Hello debugger from Amiga!\n");
